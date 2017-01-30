@@ -1,4 +1,5 @@
-﻿namespace AwsAdfsCredentialGenerator
+﻿
+namespace AwsAdfsCredentialGenerator
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +8,7 @@
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Security.Principal;
     using System.Text;
     using System.Windows.Forms;
     using System.Xml.Linq;
@@ -36,6 +38,8 @@
 
             var myIcon = new Icon(Resources.error, 16, 16);
             pictureBox1.Image = myIcon.ToBitmap();
+
+            useCurrentUserCheckBox.Text += $" ({WindowsIdentity.GetCurrent().Name})";
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -75,9 +79,16 @@
                 {
                     UseCookies = true,
                     AllowAutoRedirect = true,
-                    Credentials = new NetworkCredential(usernameTextBox.Text, passwordTextBox.Text),
                     ClientCertificateOptions = ClientCertificateOption.Automatic
                 };
+                if (useCurrentUserCheckBox.Checked)
+                {
+                    handler.UseDefaultCredentials = true;
+                }
+                else
+                {
+                    handler.Credentials = new NetworkCredential(usernameTextBox.Text, passwordTextBox.Text);
+                }
                 var client = new HttpClient(handler);
                 client.DefaultRequestHeaders.Add("User-Agent",
                     "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)");
@@ -86,16 +97,31 @@
 
                 log($"Logging in as '{usernameTextBox.Text}'...");
                 var response = await client.GetAsync(endpoint);
-                if (response.StatusCode != HttpStatusCode.Unauthorized)
+
+                string body;
+
+                if (useCurrentUserCheckBox.Checked)
                 {
-                    throw new InvalidOperationException("Invalid ADFS Url. " +
-                                                        $"Visit {endpoint} in your browser to verify.");
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new InvalidOperationException("Authentication failed.");
+                    }
+                    body = await response.Content.ReadAsStringAsync();
                 }
-                // Need to a second time for the Network Credentials to be send.
-                // Don't know why, but it works (and I saw firefox doing same). 
-                response = await client.GetAsync(response.RequestMessage.RequestUri);
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync(); 
+                else
+                {
+                    if (response.StatusCode != HttpStatusCode.Unauthorized)
+                    {
+                        throw new InvalidOperationException("Invalid ADFS Url. " +
+                                                            $"Visit {endpoint} in your browser to verify.");
+                    }
+
+                    // Need to a second time for the Network Credentials to be send.
+                    // Don't know why, but it works (and I saw firefox doing same). 
+                    response = await client.GetAsync(response.RequestMessage.RequestUri);
+                    response.EnsureSuccessStatusCode();
+                    body = await response.Content.ReadAsStringAsync();
+                }
 
                 // Get the base64 encoded SAML response from the respons body HTML.
                 var parser = new HtmlParser();
@@ -223,6 +249,12 @@
 
             var timeSpan = TimeSpan.FromSeconds(remainingSeconds);
             countdownLabel.Text = $@"{timeSpan.Minutes.ToString().PadLeft(2, '0')}:{timeSpan.Seconds.ToString().PadLeft(2, '0')}";
+        }
+
+        private void useCurrentUser_CheckedChanged(object sender, EventArgs e)
+        {
+            usernameTextBox.Enabled = !useCurrentUserCheckBox.Checked;
+            passwordTextBox.Enabled = !useCurrentUserCheckBox.Checked;
         }
     }
 }

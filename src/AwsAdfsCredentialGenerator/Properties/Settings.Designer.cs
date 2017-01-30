@@ -70,5 +70,17 @@ namespace AwsAdfsCredentialGenerator.Properties {
                 this["SamlProviderName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseCurrentUser {
+            get {
+                return ((bool)(this["UseCurrentUser"]));
+            }
+            set {
+                this["UseCurrentUser"] = value;
+            }
+        }
     }
 }

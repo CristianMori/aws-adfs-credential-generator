@@ -14,5 +14,8 @@
     <Setting Name="SamlProviderName" Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;Retrieve from AWS IAM console&gt;</Value>
     </Setting>
+    <Setting Name="UseCurrentUser" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
