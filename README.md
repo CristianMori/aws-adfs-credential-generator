@@ -22,6 +22,16 @@ Here is a screen shot of [S3Browser](http://s3browser.com/) using the generated 
  4. For each Role, temporary credentials are requested from AWS and written to `$USERPROFILE/.aws/credentials-generated`
  5. The temporary credentials are refreshed automatically every 50 minutes (the max lifetime for a AWS temporary credential is 60 minutes).
  6. CLI tooling / S3Browser etc should be configured to use `$USERPROFILE/.aws/credentials-generated`.
+ 
+### Settings
+
+
+ - **ADFS URL**: The URL to your ADFS server for Identity Provider Initiated Sign On. Get this value from your friendly Administrator.
+ - **Login to RP**: The AWS Relying Party name. This is configured in ADFS. Get this value from your friendly Administrator.
+ - **Use Crrent User**: Authenticates with your logged in windows credentials. Use this if your machine & account is part of a domain.
+ - **Username**, **Password**: Allows you to specify credentials to log in to ADFS. Use this if your machinc / account is NOT part of a domain, or you want to log in as someone else.
+ - **SAML Prioder Name**: The Identity Provider Name, as configured in AWS IAM's "Identity Providers" section. Get this value from your friendly Administrator.
+ - **Profiles**: The collection of Roles you can assume when logging into your AWS accound are written as "Credential Profiles". Use these values in CLI (i.e. AWS Powershell `-ProfileName`) or GUI tools (S3Browser above).
 
 ### Contributing
 
