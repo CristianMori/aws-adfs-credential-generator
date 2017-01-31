@@ -1,6 +1,6 @@
 # AWS-ADFS-Credential-Generator
 
-Windows desktop application that generate an AWS Credential file with temporary credentials for ADFS users.
+Windows desktop application that generates an AWS Credential file with temporary credentials for ADFS users.
 Inspired by [How to Implement Federated API and CLI Access Using SAML 2.0 and AD FS](https://aws.amazon.com/blogs/security/how-to-implement-federated-api-and-cli-access-using-saml-2-0-and-ad-fs/)
 this tool is designed for less technically inclined folk who need tooling/API access to AWS but are not CLI comfortable.
 
