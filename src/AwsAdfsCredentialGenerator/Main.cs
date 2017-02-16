@@ -3,13 +3,16 @@ namespace AwsAdfsCredentialGenerator
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Security.Cryptography;
     using System.Security.Principal;
     using System.Text;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
     using System.Xml.Linq;
     using Amazon.Runtime;
@@ -18,11 +21,15 @@ namespace AwsAdfsCredentialGenerator
     using AngleSharp.Dom.Html;
     using AngleSharp.Parser.Html;
     using AwsAdfsCredentialGenerator.Properties;
+    using Microsoft.Win32;
 
     public partial class Main : Form
     {
         private int _secondsToWait = 3000; // 50 mins (aws STS token freshness is limited to 1 hour
         private DateTime _startTime;
+
+        private static readonly string StartupKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        private static readonly string StartupValue = "AwsAdfsCredentialGenerator";
 
         public Main()
         {
@@ -40,6 +47,17 @@ namespace AwsAdfsCredentialGenerator
             pictureBox1.Image = myIcon.ToBitmap();
 
             useCurrentUserCheckBox.Text += $" ({WindowsIdentity.GetCurrent().Name})";
+
+            passwordTextBox.Text = ReadPassword();
+
+            var key = Registry.CurrentUser.OpenSubKey(StartupKey, true);
+            var value = key?.GetValue(StartupValue);
+            startWithWindowsCheckbox.Checked = value != null;
+            Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                RefreshCredentials();
+            });
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -57,13 +75,18 @@ namespace AwsAdfsCredentialGenerator
             }
         }
 
-        private void refreshCredentialsButton_Click(object sender, EventArgs _)
+        private void refreshCredentialsButton_Click(object _, EventArgs __)
         {
             RefreshCredentials();
         }
 
         private async void RefreshCredentials()
         {
+            if(refreshCredentialsButton.InvokeRequired)
+            {
+                refreshCredentialsButton.Invoke(new Action(RefreshCredentials));
+                return;
+            }
             refreshCredentialsButton.Enabled = false;
             logTextBox.Text = string.Empty;
             errorPanel.Visible = false;
@@ -255,6 +278,67 @@ namespace AwsAdfsCredentialGenerator
         {
             usernameTextBox.Enabled = !useCurrentUserCheckBox.Checked;
             passwordTextBox.Enabled = !useCurrentUserCheckBox.Checked;
+        }
+
+        private void projectLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/damianh/aws-adfs-credential-generator");
+        }
+
+
+        private void startWithWindowsCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if(startWithWindowsCheckbox.Checked)
+            {
+                //Set the application to run at startup
+                var key = Registry.CurrentUser.OpenSubKey(StartupKey, true);
+                key.SetValue(StartupValue, Application.ExecutablePath);
+            }
+            else
+            {
+                var key = Registry.CurrentUser.OpenSubKey(StartupKey, true);
+                var value = key?.GetValue(StartupValue);
+                if(value != null)
+                {
+                    key.DeleteValue(StartupValue);
+                }
+            }
+        }
+
+        static readonly byte[] AditionalEntropy = { 1, 5, 9, 8, 7, 6, 5 };
+
+        private string ReadPassword()
+        {
+            try
+            {
+                var password = Settings.Default.Password;
+                var encrypted = Convert.FromBase64String(password);
+                var bytes = ProtectedData.Unprotect(encrypted, AditionalEntropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(bytes);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        private void SavePassword()
+        {
+            try
+            {
+                var bytes = Encoding.UTF8.GetBytes(passwordTextBox.Text);
+                var encrypted = ProtectedData.Protect(bytes, AditionalEntropy, DataProtectionScope.CurrentUser);
+                var password = Convert.ToBase64String(encrypted);
+                Settings.Default.Password = password;
+            }
+            catch (CryptographicException)
+            { }
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            SavePassword();
+            Settings.Default.Save();
         }
     }
 }
