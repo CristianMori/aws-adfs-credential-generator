@@ -33,16 +33,22 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.mainTab = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.loginToRPTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.adfsUrlLabel = new System.Windows.Forms.Label();
-            this.labelProfiles = new System.Windows.Forms.Label();
-            this.profilesTextBox = new System.Windows.Forms.TextBox();
+            this.adfsUrlTextBox = new System.Windows.Forms.TextBox();
             this.credentialFilePathLabel = new System.Windows.Forms.Label();
             this.credentialFilePathTextBox = new System.Windows.Forms.TextBox();
+            this.samlProviderNameTextBox = new System.Windows.Forms.TextBox();
             this.samlProviderNameLabel = new System.Windows.Forms.Label();
             this.labelPassword = new System.Windows.Forms.Label();
             this.usernameLabel = new System.Windows.Forms.Label();
             this.passwordTextBox = new System.Windows.Forms.TextBox();
+            this.usernameTextBox = new System.Windows.Forms.TextBox();
+            this.useCurrentUserCheckBox = new System.Windows.Forms.CheckBox();
+            this.labelProfiles = new System.Windows.Forms.Label();
+            this.profilesListBox = new System.Windows.Forms.ListBox();
+            this.setEnvironmentVariablesCheckBox = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.countdownLabel = new System.Windows.Forms.Label();
             this.errorPanel = new System.Windows.Forms.Panel();
@@ -52,16 +58,14 @@
             this.logTab = new System.Windows.Forms.TabPage();
             this.logTextBox = new System.Windows.Forms.TextBox();
             this.aboutTab = new System.Windows.Forms.TabPage();
+            this.startWithWindowsCheckbox = new System.Windows.Forms.CheckBox();
             this.projectLinkLabel = new System.Windows.Forms.LinkLabel();
             this.aboutLabel = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.loginToRPTextBox = new System.Windows.Forms.TextBox();
-            this.adfsUrlTextBox = new System.Windows.Forms.TextBox();
-            this.samlProviderNameTextBox = new System.Windows.Forms.TextBox();
-            this.usernameTextBox = new System.Windows.Forms.TextBox();
-            this.useCurrentUserCheckBox = new System.Windows.Forms.CheckBox();
-            this.startWithWindowsCheckbox = new System.Windows.Forms.CheckBox();
+            this.refereshTimer = new System.Windows.Forms.Timer(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.clearEnvVarsButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.mainTab.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -70,6 +74,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.logTab.SuspendLayout();
             this.aboutTab.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -81,7 +86,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(826, 649);
+            this.tabControl1.Size = new System.Drawing.Size(865, 771);
             this.tabControl1.TabIndex = 0;
             // 
             // mainTab
@@ -91,7 +96,7 @@
             this.mainTab.Location = new System.Drawing.Point(4, 29);
             this.mainTab.Name = "mainTab";
             this.mainTab.Padding = new System.Windows.Forms.Padding(3);
-            this.mainTab.Size = new System.Drawing.Size(818, 616);
+            this.mainTab.Size = new System.Drawing.Size(857, 738);
             this.mainTab.TabIndex = 0;
             this.mainTab.Text = "Main";
             this.mainTab.UseVisualStyleBackColor = true;
@@ -105,8 +110,6 @@
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.adfsUrlLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.adfsUrlTextBox, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelProfiles, 0, 7);
-            this.tableLayoutPanel1.Controls.Add(this.profilesTextBox, 1, 7);
             this.tableLayoutPanel1.Controls.Add(this.credentialFilePathLabel, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.credentialFilePathTextBox, 1, 6);
             this.tableLayoutPanel1.Controls.Add(this.samlProviderNameTextBox, 1, 5);
@@ -116,10 +119,13 @@
             this.tableLayoutPanel1.Controls.Add(this.passwordTextBox, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.usernameTextBox, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.useCurrentUserCheckBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.labelProfiles, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.profilesListBox, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 7);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowCount = 9;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -127,9 +133,22 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(812, 554);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(851, 676);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // loginToRPTextBox
+            // 
+            this.loginToRPTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.loginToRPTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "LoginToRP", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.loginToRPTextBox.Location = new System.Drawing.Point(203, 35);
+            this.loginToRPTextBox.Name = "loginToRPTextBox";
+            this.loginToRPTextBox.Size = new System.Drawing.Size(645, 26);
+            this.loginToRPTextBox.TabIndex = 1;
+            this.loginToRPTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.LoginToRP;
             // 
             // label1
             // 
@@ -153,29 +172,17 @@
             this.adfsUrlLabel.TabIndex = 0;
             this.adfsUrlLabel.Text = "ADFS URL:";
             // 
-            // labelProfiles
+            // adfsUrlTextBox
             // 
-            this.labelProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelProfiles.AutoSize = true;
-            this.labelProfiles.Location = new System.Drawing.Point(132, 228);
-            this.labelProfiles.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
-            this.labelProfiles.Name = "labelProfiles";
-            this.labelProfiles.Size = new System.Drawing.Size(65, 20);
-            this.labelProfiles.TabIndex = 11;
-            this.labelProfiles.Text = "Profiles:";
-            // 
-            // profilesTextBox
-            // 
-            this.profilesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.adfsUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.profilesTextBox.Location = new System.Drawing.Point(203, 227);
-            this.profilesTextBox.Multiline = true;
-            this.profilesTextBox.Name = "profilesTextBox";
-            this.profilesTextBox.ReadOnly = true;
-            this.profilesTextBox.Size = new System.Drawing.Size(607, 324);
-            this.profilesTextBox.TabIndex = 6;
-            this.profilesTextBox.UseSystemPasswordChar = true;
+            this.adfsUrlTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "AdfsUrl", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.adfsUrlTextBox.Location = new System.Drawing.Point(203, 3);
+            this.adfsUrlTextBox.Name = "adfsUrlTextBox";
+            this.adfsUrlTextBox.Size = new System.Drawing.Size(645, 26);
+            this.adfsUrlTextBox.TabIndex = 0;
+            this.adfsUrlTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.AdfsUrl;
             // 
             // credentialFilePathLabel
             // 
@@ -196,8 +203,20 @@
             this.credentialFilePathTextBox.Location = new System.Drawing.Point(203, 195);
             this.credentialFilePathTextBox.Name = "credentialFilePathTextBox";
             this.credentialFilePathTextBox.ReadOnly = true;
-            this.credentialFilePathTextBox.Size = new System.Drawing.Size(607, 26);
+            this.credentialFilePathTextBox.Size = new System.Drawing.Size(645, 26);
             this.credentialFilePathTextBox.TabIndex = 5;
+            // 
+            // samlProviderNameTextBox
+            // 
+            this.samlProviderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.samlProviderNameTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "SamlProviderName", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.samlProviderNameTextBox.Location = new System.Drawing.Point(203, 163);
+            this.samlProviderNameTextBox.Name = "samlProviderNameTextBox";
+            this.samlProviderNameTextBox.Size = new System.Drawing.Size(645, 26);
+            this.samlProviderNameTextBox.TabIndex = 4;
+            this.samlProviderNameTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.SamlProviderName;
             // 
             // samlProviderNameLabel
             // 
@@ -240,9 +259,75 @@
             this.passwordTextBox.Enabled = false;
             this.passwordTextBox.Location = new System.Drawing.Point(203, 131);
             this.passwordTextBox.Name = "passwordTextBox";
-            this.passwordTextBox.Size = new System.Drawing.Size(607, 26);
+            this.passwordTextBox.Size = new System.Drawing.Size(645, 26);
             this.passwordTextBox.TabIndex = 3;
             this.passwordTextBox.UseSystemPasswordChar = true;
+            // 
+            // usernameTextBox
+            // 
+            this.usernameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.usernameTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "Username", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.usernameTextBox.Enabled = false;
+            this.usernameTextBox.Location = new System.Drawing.Point(203, 99);
+            this.usernameTextBox.Name = "usernameTextBox";
+            this.usernameTextBox.Size = new System.Drawing.Size(645, 26);
+            this.usernameTextBox.TabIndex = 2;
+            this.usernameTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.Username;
+            // 
+            // useCurrentUserCheckBox
+            // 
+            this.useCurrentUserCheckBox.AutoSize = true;
+            this.useCurrentUserCheckBox.Checked = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.UseCurrentUser;
+            this.useCurrentUserCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.useCurrentUserCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "UseCurrentUser", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.useCurrentUserCheckBox.Location = new System.Drawing.Point(204, 68);
+            this.useCurrentUserCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.useCurrentUserCheckBox.Name = "useCurrentUserCheckBox";
+            this.useCurrentUserCheckBox.Size = new System.Drawing.Size(153, 24);
+            this.useCurrentUserCheckBox.TabIndex = 12;
+            this.useCurrentUserCheckBox.Text = "Use current user";
+            this.useCurrentUserCheckBox.UseVisualStyleBackColor = true;
+            this.useCurrentUserCheckBox.CheckedChanged += new System.EventHandler(this.useCurrentUser_CheckedChanged);
+            // 
+            // labelProfiles
+            // 
+            this.labelProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelProfiles.AutoSize = true;
+            this.labelProfiles.Location = new System.Drawing.Point(132, 228);
+            this.labelProfiles.Margin = new System.Windows.Forms.Padding(3, 4, 3, 0);
+            this.labelProfiles.Name = "labelProfiles";
+            this.labelProfiles.Size = new System.Drawing.Size(65, 20);
+            this.labelProfiles.TabIndex = 11;
+            this.labelProfiles.Text = "Profiles:";
+            // 
+            // profilesListBox
+            // 
+            this.profilesListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.profilesListBox.FormattingEnabled = true;
+            this.profilesListBox.ItemHeight = 20;
+            this.profilesListBox.Location = new System.Drawing.Point(203, 274);
+            this.profilesListBox.Name = "profilesListBox";
+            this.profilesListBox.Size = new System.Drawing.Size(645, 399);
+            this.profilesListBox.TabIndex = 13;
+            this.profilesListBox.SelectedIndexChanged += new System.EventHandler(this.profilesListBox_SelectedIndexChanged);
+            this.profilesListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.profilesListBox_KeyDown);
+            // 
+            // setEnvironmentVariablesCheckBox
+            // 
+            this.setEnvironmentVariablesCheckBox.AutoSize = true;
+            this.setEnvironmentVariablesCheckBox.Checked = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.UseCurrentUser;
+            this.setEnvironmentVariablesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.setEnvironmentVariablesCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "SetEnvironmentVariables", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this.setEnvironmentVariablesCheckBox.Location = new System.Drawing.Point(4, 9);
+            this.setEnvironmentVariablesCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.setEnvironmentVariablesCheckBox.Name = "setEnvironmentVariablesCheckBox";
+            this.setEnvironmentVariablesCheckBox.Size = new System.Drawing.Size(357, 24);
+            this.setEnvironmentVariablesCheckBox.TabIndex = 15;
+            this.setEnvironmentVariablesCheckBox.Text = "Set environment variables on profile selection.";
+            this.setEnvironmentVariablesCheckBox.UseVisualStyleBackColor = true;
+            this.setEnvironmentVariablesCheckBox.CheckedChanged += new System.EventHandler(this.setEnvironmentVariablesCheckBox_CheckedChanged);
             // 
             // panel1
             // 
@@ -250,16 +335,16 @@
             this.panel1.Controls.Add(this.errorPanel);
             this.panel1.Controls.Add(this.refreshCredentialsButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(3, 557);
+            this.panel1.Location = new System.Drawing.Point(3, 679);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(812, 56);
+            this.panel1.Size = new System.Drawing.Size(851, 56);
             this.panel1.TabIndex = 1;
             // 
             // countdownLabel
             // 
             this.countdownLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.countdownLabel.AutoSize = true;
-            this.countdownLabel.Location = new System.Drawing.Point(552, 16);
+            this.countdownLabel.Location = new System.Drawing.Point(591, 16);
             this.countdownLabel.Name = "countdownLabel";
             this.countdownLabel.Size = new System.Drawing.Size(49, 20);
             this.countdownLabel.TabIndex = 3;
@@ -295,7 +380,7 @@
             // refreshCredentialsButton
             // 
             this.refreshCredentialsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.refreshCredentialsButton.Location = new System.Drawing.Point(602, 6);
+            this.refreshCredentialsButton.Location = new System.Drawing.Point(641, 6);
             this.refreshCredentialsButton.Name = "refreshCredentialsButton";
             this.refreshCredentialsButton.Size = new System.Drawing.Size(207, 44);
             this.refreshCredentialsButton.TabIndex = 0;
@@ -309,7 +394,7 @@
             this.logTab.Location = new System.Drawing.Point(4, 29);
             this.logTab.Name = "logTab";
             this.logTab.Padding = new System.Windows.Forms.Padding(3);
-            this.logTab.Size = new System.Drawing.Size(818, 616);
+            this.logTab.Size = new System.Drawing.Size(857, 738);
             this.logTab.TabIndex = 1;
             this.logTab.Text = "Log";
             this.logTab.UseVisualStyleBackColor = true;
@@ -322,7 +407,7 @@
             this.logTextBox.Name = "logTextBox";
             this.logTextBox.ReadOnly = true;
             this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.logTextBox.Size = new System.Drawing.Size(812, 610);
+            this.logTextBox.Size = new System.Drawing.Size(851, 732);
             this.logTextBox.TabIndex = 14;
             this.logTextBox.UseSystemPasswordChar = true;
             // 
@@ -333,10 +418,24 @@
             this.aboutTab.Controls.Add(this.aboutLabel);
             this.aboutTab.Location = new System.Drawing.Point(4, 29);
             this.aboutTab.Name = "aboutTab";
-            this.aboutTab.Size = new System.Drawing.Size(818, 616);
+            this.aboutTab.Size = new System.Drawing.Size(857, 738);
             this.aboutTab.TabIndex = 2;
             this.aboutTab.Text = "About";
             this.aboutTab.UseVisualStyleBackColor = true;
+            // 
+            // startWithWindowsCheckbox
+            // 
+            this.startWithWindowsCheckbox.AutoSize = true;
+            this.startWithWindowsCheckbox.Checked = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.UseCurrentUser;
+            this.startWithWindowsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.startWithWindowsCheckbox.Location = new System.Drawing.Point(9, 126);
+            this.startWithWindowsCheckbox.Margin = new System.Windows.Forms.Padding(4);
+            this.startWithWindowsCheckbox.Name = "startWithWindowsCheckbox";
+            this.startWithWindowsCheckbox.Size = new System.Drawing.Size(166, 24);
+            this.startWithWindowsCheckbox.TabIndex = 14;
+            this.startWithWindowsCheckbox.Text = "Start with windows";
+            this.startWithWindowsCheckbox.UseVisualStyleBackColor = true;
+            this.startWithWindowsCheckbox.CheckedChanged += new System.EventHandler(this.startWithWindowsCheckbox_CheckedChanged);
             // 
             // projectLinkLabel
             // 
@@ -368,94 +467,36 @@
             this.notifyIcon.Visible = true;
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
-            // timer1
+            // refereshTimer
             // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.refereshTimer.Interval = 1000;
+            this.refereshTimer.Tick += new System.EventHandler(this.refreshTimer_Tick);
             // 
-            // loginToRPTextBox
+            // panel2
             // 
-            this.loginToRPTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.loginToRPTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "LoginToRP", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.loginToRPTextBox.Location = new System.Drawing.Point(203, 35);
-            this.loginToRPTextBox.Name = "loginToRPTextBox";
-            this.loginToRPTextBox.Size = new System.Drawing.Size(607, 26);
-            this.loginToRPTextBox.TabIndex = 1;
-            this.loginToRPTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.LoginToRP;
+            this.panel2.Controls.Add(this.clearEnvVarsButton);
+            this.panel2.Controls.Add(this.setEnvironmentVariablesCheckBox);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(203, 227);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(645, 41);
+            this.panel2.TabIndex = 16;
             // 
-            // adfsUrlTextBox
+            // clearEnvVarsButton
             // 
-            this.adfsUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.adfsUrlTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "AdfsUrl", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.adfsUrlTextBox.Location = new System.Drawing.Point(203, 3);
-            this.adfsUrlTextBox.Name = "adfsUrlTextBox";
-            this.adfsUrlTextBox.Size = new System.Drawing.Size(607, 26);
-            this.adfsUrlTextBox.TabIndex = 0;
-            this.adfsUrlTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.AdfsUrl;
-            // 
-            // samlProviderNameTextBox
-            // 
-            this.samlProviderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.samlProviderNameTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "SamlProviderName", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.samlProviderNameTextBox.Location = new System.Drawing.Point(203, 163);
-            this.samlProviderNameTextBox.Name = "samlProviderNameTextBox";
-            this.samlProviderNameTextBox.Size = new System.Drawing.Size(607, 26);
-            this.samlProviderNameTextBox.TabIndex = 4;
-            this.samlProviderNameTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.SamlProviderName;
-            // 
-            // usernameTextBox
-            // 
-            this.usernameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.usernameTextBox.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "Username", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.usernameTextBox.Enabled = false;
-            this.usernameTextBox.Location = new System.Drawing.Point(203, 99);
-            this.usernameTextBox.Name = "usernameTextBox";
-            this.usernameTextBox.Size = new System.Drawing.Size(607, 26);
-            this.usernameTextBox.TabIndex = 2;
-            this.usernameTextBox.Text = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.Username;
-            // 
-            // useCurrentUserCheckBox
-            // 
-            this.useCurrentUserCheckBox.AutoSize = true;
-            this.useCurrentUserCheckBox.Checked = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.UseCurrentUser;
-            this.useCurrentUserCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.useCurrentUserCheckBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::AwsAdfsCredentialGenerator.Properties.Settings.Default, "UseCurrentUser", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
-            this.useCurrentUserCheckBox.Location = new System.Drawing.Point(204, 68);
-            this.useCurrentUserCheckBox.Margin = new System.Windows.Forms.Padding(4);
-            this.useCurrentUserCheckBox.Name = "useCurrentUserCheckBox";
-            this.useCurrentUserCheckBox.Size = new System.Drawing.Size(153, 24);
-            this.useCurrentUserCheckBox.TabIndex = 12;
-            this.useCurrentUserCheckBox.Text = "Use current user";
-            this.useCurrentUserCheckBox.UseVisualStyleBackColor = true;
-            this.useCurrentUserCheckBox.CheckedChanged += new System.EventHandler(this.useCurrentUser_CheckedChanged);
-            // 
-            // startWithWindowsCheckbox
-            // 
-            this.startWithWindowsCheckbox.AutoSize = true;
-            this.startWithWindowsCheckbox.Checked = global::AwsAdfsCredentialGenerator.Properties.Settings.Default.UseCurrentUser;
-            this.startWithWindowsCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.startWithWindowsCheckbox.Location = new System.Drawing.Point(9, 126);
-            this.startWithWindowsCheckbox.Margin = new System.Windows.Forms.Padding(4);
-            this.startWithWindowsCheckbox.Name = "startWithWindowsCheckbox";
-            this.startWithWindowsCheckbox.Size = new System.Drawing.Size(166, 24);
-            this.startWithWindowsCheckbox.TabIndex = 14;
-            this.startWithWindowsCheckbox.Text = "Start with windows";
-            this.startWithWindowsCheckbox.UseVisualStyleBackColor = true;
-            this.startWithWindowsCheckbox.CheckedChanged += new System.EventHandler(this.startWithWindowsCheckbox_CheckedChanged);
+            this.clearEnvVarsButton.Location = new System.Drawing.Point(368, 4);
+            this.clearEnvVarsButton.Name = "clearEnvVarsButton";
+            this.clearEnvVarsButton.Size = new System.Drawing.Size(215, 32);
+            this.clearEnvVarsButton.TabIndex = 16;
+            this.clearEnvVarsButton.Text = "Clear Enviroment Variables";
+            this.clearEnvVarsButton.UseVisualStyleBackColor = true;
+            this.clearEnvVarsButton.Click += new System.EventHandler(this.clearEnvVarsButton_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(826, 649);
+            this.ClientSize = new System.Drawing.Size(865, 771);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -479,6 +520,8 @@
             this.logTab.PerformLayout();
             this.aboutTab.ResumeLayout(false);
             this.aboutTab.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -506,17 +549,21 @@
         private System.Windows.Forms.TextBox credentialFilePathTextBox;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label labelProfiles;
-        private System.Windows.Forms.TextBox profilesTextBox;
         private System.Windows.Forms.Button refreshCredentialsButton;
         private System.Windows.Forms.TextBox logTextBox;
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.Panel errorPanel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer refereshTimer;
         private System.Windows.Forms.Label countdownLabel;
         private System.Windows.Forms.CheckBox useCurrentUserCheckBox;
         private System.Windows.Forms.CheckBox startWithWindowsCheckbox;
+        private System.Windows.Forms.ListBox profilesListBox;
+        private System.Windows.Forms.CheckBox setEnvironmentVariablesCheckBox;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button clearEnvVarsButton;
     }
 }
 

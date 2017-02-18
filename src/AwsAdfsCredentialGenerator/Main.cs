@@ -30,6 +30,7 @@ namespace AwsAdfsCredentialGenerator
 
         private static readonly string StartupKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
         private static readonly string StartupValue = "AwsAdfsCredentialGenerator";
+        private readonly SortedSet<Profile> _profiles = new SortedSet<Profile>();
 
         public Main()
         {
@@ -46,7 +47,7 @@ namespace AwsAdfsCredentialGenerator
             var myIcon = new Icon(Resources.error, 16, 16);
             pictureBox1.Image = myIcon.ToBitmap();
 
-            useCurrentUserCheckBox.Text += $" ({WindowsIdentity.GetCurrent().Name})";
+            useCurrentUserCheckBox.Text += $@" ({WindowsIdentity.GetCurrent().Name})";
 
             passwordTextBox.Text = ReadPassword();
 
@@ -90,8 +91,9 @@ namespace AwsAdfsCredentialGenerator
             refreshCredentialsButton.Enabled = false;
             logTextBox.Text = string.Empty;
             errorPanel.Visible = false;
-            profilesTextBox.Text = string.Empty;
-            timer1.Stop();
+            profilesListBox.Items.Clear();
+            _profiles.Clear();
+            refereshTimer.Stop();
             Action<string> log = m => logTextBox.AppendText($"{DateTime.Now}: {m} {Environment.NewLine}");
             try
             {
@@ -230,12 +232,21 @@ namespace AwsAdfsCredentialGenerator
                 foreach (var assumedRole in assumedRoles)
                 {
                     var profile = assumedRole.AssumedRoleUser.Arn.Split(':')[5].Split('/')[1];
-                    profilesTextBox.AppendText($"{profile}{Environment.NewLine}");
+                    _profiles.Add(
+                        new Profile(
+                            profile,
+                            assumedRole.Credentials.AccessKeyId,
+                            assumedRole.Credentials.SecretAccessKey,
+                            assumedRole.Credentials.SessionToken));
                     stringBuilder.AppendLine($"[{profile}]");
                     stringBuilder.AppendLine($"aws_access_key_id={assumedRole.Credentials.AccessKeyId}");
                     stringBuilder.AppendLine($"aws_secret_access_key={assumedRole.Credentials.SecretAccessKey}");
                     stringBuilder.AppendLine($"aws_session_token={assumedRole.Credentials.SessionToken}");
                     stringBuilder.AppendLine();
+                }
+                foreach(var profile in _profiles)
+                {
+                    profilesListBox.Items.Add(profile);
                 }
                 var credentialDirectory = Path.GetDirectoryName(credentialFilePathTextBox.Text);
                 Directory.CreateDirectory(credentialDirectory);
@@ -250,7 +261,7 @@ namespace AwsAdfsCredentialGenerator
 
             refreshCredentialsButton.Enabled = true;
             _startTime = DateTime.Now;
-            timer1.Start();
+            refereshTimer.Start();
         }
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -258,7 +269,7 @@ namespace AwsAdfsCredentialGenerator
             Settings.Default.Save();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void refreshTimer_Tick(object sender, EventArgs e)
         {
             var elapsedSeconds = (int)(DateTime.Now - _startTime).TotalSeconds;
             var remainingSeconds = _secondsToWait - elapsedSeconds;
@@ -266,7 +277,7 @@ namespace AwsAdfsCredentialGenerator
             if (remainingSeconds <= 0)
             {
                 // run your function
-                timer1.Stop();
+                refereshTimer.Stop();
                 RefreshCredentials();
             }
 
@@ -284,7 +295,6 @@ namespace AwsAdfsCredentialGenerator
         {
             Process.Start("https://github.com/damianh/aws-adfs-credential-generator");
         }
-
 
         private void startWithWindowsCheckbox_CheckedChanged(object sender, EventArgs e)
         {
@@ -305,7 +315,7 @@ namespace AwsAdfsCredentialGenerator
             }
         }
 
-        static readonly byte[] AditionalEntropy = { 1, 5, 9, 8, 7, 6, 5 };
+        private static readonly byte[] AditionalEntropy = { 1, 5, 9, 8, 7, 6, 5 };
 
         private string ReadPassword()
         {
@@ -339,6 +349,44 @@ namespace AwsAdfsCredentialGenerator
         {
             SavePassword();
             Settings.Default.Save();
+        }
+
+        private void profilesListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Control && e.KeyCode == Keys.C && profilesListBox.SelectedItem != null)
+            {
+                Clipboard.SetText(profilesListBox.SelectedItem.ToString());
+            }
+        }
+
+        private void profilesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetEnvironmentVariables();
+        }
+
+        private void setEnvironmentVariablesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SetEnvironmentVariables();
+        }
+
+        private void SetEnvironmentVariables()
+        {
+            if (!setEnvironmentVariablesCheckBox.Checked || profilesListBox.SelectedItem == null)
+            {
+                return;
+            }
+            var profile = (Profile)profilesListBox.SelectedItem;
+            Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", profile.AwsAccessKeyId, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", profile.AwsSecretAccess, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("AWS_SESSION_TOKEN", profile.AwsSessionToken, EnvironmentVariableTarget.User);
+        }
+
+        private void clearEnvVarsButton_Click(object sender, EventArgs e)
+        {
+            Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", null, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", null, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("AWS_SESSION_TOKEN", null, EnvironmentVariableTarget.User);
+            setEnvironmentVariablesCheckBox.Checked = false;
         }
     }
 }
