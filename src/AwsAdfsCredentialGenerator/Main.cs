@@ -23,7 +23,7 @@ namespace AwsAdfsCredentialGenerator
     using AwsAdfsCredentialGenerator.Properties;
     using Microsoft.Win32;
 
-    public partial class Main : Form
+    public sealed partial class Main : Form
     {
         private int _secondsToWait = 3000; // 50 mins (aws STS token freshness is limited to 1 hour
         private DateTime _startTime;
@@ -35,6 +35,8 @@ namespace AwsAdfsCredentialGenerator
         public Main()
         {
             InitializeComponent();
+            var version = typeof(Main).Assembly.GetName().Version;
+            Text = $@"{Text} ({version.Major}.{version.Minor})";
             var link = new LinkLabel.Link
             {
                 LinkData = "https://github.com/damianh/aws-adfs-credential-generator"
@@ -42,7 +44,7 @@ namespace AwsAdfsCredentialGenerator
             projectLinkLabel.Links.Add(link);
 
             var userDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            credentialFilePathTextBox.Text = $@"{userDir}\.aws\credentials-generated";
+            credentialFilePathTextBox.Text = $@"{userDir}\.aws\credentials";
 
             var myIcon = new Icon(Resources.error, 16, 16);
             pictureBox1.Image = myIcon.ToBitmap();
@@ -376,16 +378,12 @@ namespace AwsAdfsCredentialGenerator
                 return;
             }
             var profile = (Profile)profilesListBox.SelectedItem;
-            Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", profile.AwsAccessKeyId, EnvironmentVariableTarget.User);
-            Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", profile.AwsSecretAccess, EnvironmentVariableTarget.User);
-            Environment.SetEnvironmentVariable("AWS_SESSION_TOKEN", profile.AwsSessionToken, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("AWS_PROFILE", profile.Name, EnvironmentVariableTarget.User);
         }
 
         private void clearEnvVarsButton_Click(object sender, EventArgs e)
         {
-            Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", null, EnvironmentVariableTarget.User);
-            Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", null, EnvironmentVariableTarget.User);
-            Environment.SetEnvironmentVariable("AWS_SESSION_TOKEN", null, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("AWS_PROFILE", null, EnvironmentVariableTarget.User);
             setEnvironmentVariablesCheckBox.Checked = false;
         }
     }
